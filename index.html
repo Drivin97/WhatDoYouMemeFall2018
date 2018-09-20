@@ -1,39 +1,67 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
-  </head>
-  <body>
+        <title>Hello, world!</title>
+    </head>
+    <body>
     
 
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>Hello, world!</h1>
+        <div class="container" id="app">
+            <div class="row">
+                <div class="col">
+                    <!-- Binding image through vue -->
+                    <img v-bind:src="image"/>
+                    <!-- Show which player name is clicked on -->
+                    <h4>Current Player: {{currentPlayer.name}}</h4>
+                </div>
+                <div class="col">
+                    <ul>
+                        <!-- v-for is a for loop, allows for looping through array -->
+                        <li v-for="player in players" @click="makeCurrent(player)">
+                            {{player.name}}
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script>
-      let size = 10;
-      $(function() {
-          $("h1").on("click", function() {
-              size += 10;
-              $(this).css({fontSize: size});
-          });
-      });
-  </script>
-  </body>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script>
+            
+            //Always want to use const whenever you can
+            const v = new Vue({
+                //Selecting an elements ID, giving the div Vue
+                el: "#app",
+                //return function to make sure it gets fresh data
+                data: function() {
+                    return {
+                        image: "https://media2.s-nbcnews.com/j/newscms/2018_38/2572721/180920-xi-putin-panckaes-mc-955_209ac42eeab009749defc9e8f3c6ee38.focal-460x230.JPG",
+                        players: [
+                            {name: "Dwayne"},
+                            {name: "Moshe"},
+                            {name: "Barack Obama"},
+                            {name: "Vince"}
+                        ],
+                        currentPlayer: {}
+                    }
+                },
+                methods: {
+                    makeCurrent: function(player) {
+                        this.currentPlayer = player;
+                    }
+                },
+            });
+        </script>
+    </body>
 </html>
