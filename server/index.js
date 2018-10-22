@@ -6,16 +6,12 @@ const app = express();
 const port = 3000;
 const server = "localhost";
 
-app.get("/", function(req, res){
-
-    res.send("Hello World");
-
-})
-
 app.use(express.json());
-app.use(express.urlencoded({exrended: true}));
+app.use(express.urlencoded({extended: true}));
+app.use("/", express.static(__dirname + "/../dist/"));
 app.use('/game', game);
 
 app.listen(port);
 
-console.log('Listening on: http://${server}:${port}');
+// eslint-disable-next-line no-console
+console.log(`listening on: http://${server}:${port}`);
