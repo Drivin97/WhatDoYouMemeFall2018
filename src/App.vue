@@ -1,6 +1,10 @@
 <template>
   <div id="app" class="container">
-   <Nav />
+    <div class="display-3">
+      <img alt="Vue logo" src="./assets/logo.png" id="logo">
+      What do you Meme
+    </div>
+    <Nav />
     <router-view/>
   </div>
 </template>
