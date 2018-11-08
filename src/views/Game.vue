@@ -16,6 +16,9 @@
                             class="list-group-item">
                             <img />
                             <h5>{{p.name}}</h5>
+                            <span v-if="p.id == state.dealerId" class="badge badge-success">
+                                Dealer
+                                </span> &nbsp;
                             <span class="badge badge-primary badge-pill">{{p.score}}</span>
                         </li>
  
