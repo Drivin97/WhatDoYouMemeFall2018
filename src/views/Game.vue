@@ -10,15 +10,16 @@
                     <h5 class="card-header">
                         Players
                         <a @click.prevent="login" class="btn btn-sm btn-primary" :class="{disabled: playerId() !== null}">+</a>
+                        <i v-if="playerId() !== null">(Welcome {{state.players[playerId()].name}})</i>
                     </h5>
                     <ul class="list-group list-group-flush">
                         <li v-for="p in state.players" :key="p.id"
                             class="list-group-item">
-                            <img />
+                            <img :src="`https://graph.facebook.com/${p.fbid}/picture`" />
                             <h5>{{p.name}}</h5>
                             <span v-if="p.id == state.dealerId" class="badge badge-success">
                                 Dealer
-                                </span> &nbsp;
+                            </span> &nbsp;
                             <span class="badge badge-primary badge-pill">{{p.score}}</span>
                         </li>
  
@@ -36,8 +37,13 @@
         <div class="col-md-4">
             <div class="card" >
                 <img class="card-img" :src="state.picture.url" :alt="state.picture.name">
-                <a @click.prevent="flipPicture" class="btn btn-primary">Flip Picture</a>
-
+                <div class="btn-group " style="width:100%" role="group" aria-label="Basic example">
+                    <a @click.prevent="flipPicture" class="btn btn-primary">Flip Picture</a>
+                    <a @click.prevent="getFBPictures" class="btn btn-secondary">From FB</a>
+                </div>
+                <div>
+                    <img v-for="p in fbPictures" :src="p.picture" :key="p.id" />
+                </div>            
             </div>
         </div>
         <div class="col-md-4">
@@ -45,13 +51,14 @@
                 <h5 class="card-header">Played Captions</h5>
                 <ul class="list-group list-group-flush">
                     <li v-for="c in state.playedCaptions" :key="c.text"
-                        class="list-group-item">
+                        class="list-group-item" :class="{ 'list-group-item-warning' : c.isChosen }">
                         {{c.text }}
-                        <div>
-                            <a  v-if="isDealer"
-                                @click.prevent="chooseCaption(c)"
-                                class="btn btn-primary btn-sm">Choose</a>
-                        </div>
+                        <a  v-if="isDealer"
+                            @click.prevent="chooseCaption(c)"
+                            class="btn btn-primary btn-sm">Choose</a>
+                        <span class="badge" :class="c.playerName ? 'badge-success' : 'badge-secondary'">
+                            {{c.playerName || 'Hidden'}}
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -63,8 +70,9 @@
 <style lang="scss">
     li.list-group-item {
         display: flex;
-        align-content: center;
+        align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
         img {
             width: 30px; height: 30px;
             margin-right: 5px;
@@ -77,7 +85,8 @@
 
 <script>
 import * as api from '@/services/api_access';
-
+import * as fb from '@/services/facebook';
+let loopTimer = null;
 export default {
     data(){
         return {
@@ -87,11 +96,12 @@ export default {
                 playedCaptions: [],
             },
             myCaptions: [],
+            fbPictures: []
         }
     },
     created(){
         loopTimer = setInterval(this.refresh, 1000);
-        if(api.playerId !== null && this.myCaptions.length == 0) {
+        if(api.playerId !== null && this.myCaptions.length == 0){
             api.GetMyCaptions().then(x=> this.myCaptions = x);
         }
     },
@@ -100,12 +110,15 @@ export default {
             api.GetState()
             .then(x=> this.state = x)
         },
+        getFBPictures(){
+            fb.GetPhotos( photos => this.fbPictures = photos.data );
+        },
         flipPicture(){
             api.FlipPicture()
         },
         login() {
-            api.Login(prompt('What is your name?'))
-            .then(()=> api.GetMyCaptions().then(x=> this.myCaptions = x) )
+            fb.FBLogin();
+            //.then(()=> api.GetMyCaptions().then(x=> this.myCaptions = x) )
         },
         submitCaption(c){
             api.SubmitCaption(c)
@@ -117,13 +130,14 @@ export default {
         chooseCaption(c){
             api.ChooseCaption(c)
         },
-
         playerId: ()=> api.playerId
     },
     computed: {
         isDealer(){
             return this.playerId() == this.state.dealerId;
         }
+    },
+    components: {
     }
 }
 </script>
